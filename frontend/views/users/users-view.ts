@@ -14,18 +14,21 @@ import { Notification } from '@vaadin/notification';
 import '@vaadin/polymer-legacy-adapter';
 import '@vaadin/split-layout';
 import '@vaadin/text-field';
+import '@vaadin/email-field';
 import '@vaadin/upload';
 import '@vaadin/vaadin-icons';
 import Sort from 'Frontend/generated/com/vaadin/fusion/mappedtypes/Sort';
-import Usuarios from 'Frontend/generated/com/yefersoncm/app/data/entity/Usuarios';
-import UsuariosModel from 'Frontend/generated/com/yefersoncm/app/data/entity/UsuariosModel';
+import Users from 'Frontend/generated/com/yefersoncm/app/data/entity/Users';
+import UsersModel from 'Frontend/generated/com/yefersoncm/app/data/entity/UsersModel';
+import Rol from 'Frontend/generated/com/yefersoncm/app/data/entity/Rol';
 import Direction from 'Frontend/generated/org/springframework/data/domain/Sort/Direction';
-import * as UsuariosEndpoint from 'Frontend/generated/UsuariosEndpoint';
+import * as UsersEndpoint from 'Frontend/generated/UsersEndpoint';
+import * as RolesEndpoint from 'Frontend/generated/RolesEndpoint';
 import { html } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
+import { customElement, property, query, state } from 'lit/decorators.js';
 import { View } from '../view';
 
-@customElement('usuarios-view')
+@customElement('users-view')
 export class UsuariosView extends View {
   @query('#grid')
   private grid!: Grid;
@@ -33,9 +36,12 @@ export class UsuariosView extends View {
   @property({ type: Number })
   private gridSize = 0;
 
+  @state()
+  private roles: Rol[] = [];
+
   private gridDataProvider = this.getGridData.bind(this);
 
-  private binder = new Binder<Usuarios, UsuariosModel>(this, UsuariosModel);
+  private binder = new Binder<Users, UsersModel>(this, UsersModel);
 
   render() {
     return html`
@@ -49,67 +55,41 @@ export class UsuariosView extends View {
             .dataProvider=${this.gridDataProvider}
             @active-item-changed=${this.itemSelected}
           >
-            <vaadin-grid-sort-column auto-width path="nombre"></vaadin-grid-sort-column>
-            <vaadin-grid-sort-column auto-width path="apellido"></vaadin-grid-sort-column>
-            <vaadin-grid-sort-column auto-width path="correo"></vaadin-grid-sort-column>
-            <vaadin-grid-sort-column auto-width path="telefono"></vaadin-grid-sort-column>
-            <vaadin-grid-sort-column auto-width path="fechaDeNacimiento"></vaadin-grid-sort-column>
-            <vaadin-grid-sort-column auto-width path="rol"></vaadin-grid-sort-column>
-            <vaadin-grid-column auto-width path="activo"
+            <vaadin-grid-sort-column auto-width path="id"></vaadin-grid-sort-column>
+            <vaadin-grid-sort-column auto-width path="name"></vaadin-grid-sort-column>
+            <vaadin-grid-sort-column auto-width path="lastname"></vaadin-grid-sort-column>
+            <vaadin-grid-sort-column auto-width path="email"></vaadin-grid-sort-column>
+            <vaadin-grid-sort-column auto-width path="phone" ></vaadin-grid-sort-column>
+            <vaadin-grid-sort-column auto-width path="dateofbirth" header="Date Of Birth"></vaadin-grid-sort-column>
+            <vaadin-grid-sort-column auto-width path="rol.name" header="Rol"></vaadin-grid-sort-column>
+            <vaadin-grid-column auto-width path="active"
               ><template
                 ><iron-icon
-                  hidden="[[!item.activo]]"
+                  hidden="[[!item.active]]"
                   icon="vaadin:check"
                   style="width: var(--lumo-icon-size-s); height: var(--lumo-icon-size-s); color: var(--lumo-primary-text-color);"
                 >
                 </iron-icon>
                 <iron-icon
-                  hidden="[[item.activo]]"
+                  hidden="[[item.active]]"
                   icon="vaadin:minus"
                   style="width: var(--lumo-icon-size-s); height: var(--lumo-icon-size-s); color: var(--lumo-disabled-text-color);"
                 >
                 </iron-icon></template
             ></vaadin-grid-column>
-            <vaadin-grid-sort-column auto-width path="createdAt"></vaadin-grid-sort-column>
-            <vaadin-grid-sort-column auto-width path="updatedAt"></vaadin-grid-sort-column>
           </vaadin-grid>
         </div>
         <div class="flex flex-col" style="width: 400px;">
           <div class="p-l flex-grow">
-            <vaadin-form-layout
-              ><vaadin-text-field label="Nombre" id="nombre" ${field(this.binder.model.nombre)}></vaadin-text-field
-              ><vaadin-text-field
-                label="Apellido"
-                id="apellido"
-                ${field(this.binder.model.apellido)}
-              ></vaadin-text-field
-              ><vaadin-text-field label="Correo" id="correo" ${field(this.binder.model.correo)}></vaadin-text-field
-              ><vaadin-text-field
-                label="Telefono"
-                id="telefono"
-                ${field(this.binder.model.telefono)}
-              ></vaadin-text-field
-              ><vaadin-date-picker
-                label="Fecha de nacimiento"
-                id="fechaDeNacimiento"
-                ${field(this.binder.model.fechaDeNacimiento)}
-              ></vaadin-date-picker
-              ><vaadin-text-field label="Rol" id="rol" ${field(this.binder.model.rol)}></vaadin-text-field
-              ><vaadin-checkbox id="activo" ${field(this.binder.model.activo)} style="padding-top: var(--lumo-space-m);"
-                >Activo</vaadin-checkbox
-              ><vaadin-date-time-picker
-                label="Created at"
-                id="createdAt"
-                step="1"
-                ${field(this.binder.model.createdAt)}
-              ></vaadin-date-time-picker
-              ><vaadin-date-time-picker
-                label="Updated at"
-                id="updatedAt"
-                step="1"
-                ${field(this.binder.model.updatedAt)}
-              ></vaadin-date-time-picker
-            ></vaadin-form-layout>
+            <vaadin-form-layout>
+              <vaadin-text-field required label="Name" id="name" ${field(this.binder.model.name)}  ></vaadin-text-field>
+              <vaadin-text-field required label="Lastname" id="lastname" ${field(this.binder.model.lastname)}></vaadin-text-field>
+              <vaadin-email-field required label="Email" id="email" ${field(this.binder.model.email)}></vaadin-email-field>
+              <vaadin-text-field  label="Phone" id="phone" ${field(this.binder.model.phone)}></vaadin-text-field>
+              <vaadin-date-picker required label="Date of birth" id="dateofbirth" ${field(this.binder.model.dateofbirth)}></vaadin-date-picker>
+              <vaadin-combo-box .items=${this.roles} label="Rol" id="rol"  ${field(this.binder.model.rol)} item-label-path="name" item-value-path="id"></vaadin-combo-box>
+              <vaadin-checkbox id="activo" ${field(this.binder.model.active)} style="padding-top: var(--lumo-space-m);">Active</vaadin-checkbox>
+            </vaadin-form-layout>
           </div>
           <vaadin-horizontal-layout class="w-full flex-wrap bg-contrast-5 py-s px-l" theme="spacing">
             <vaadin-button theme="primary" @click=${this.save}>Save</vaadin-button>
@@ -121,8 +101,8 @@ export class UsuariosView extends View {
   }
 
   private async getGridData(
-    params: GridDataProviderParams<Usuarios>,
-    callback: GridDataProviderCallback<Usuarios | undefined>
+    params: GridDataProviderParams<Users>,
+    callback: GridDataProviderCallback<Users | undefined>
   ) {
     const sort: Sort = {
       orders: params.sortOrders.map((order) => ({
@@ -131,22 +111,23 @@ export class UsuariosView extends View {
         ignoreCase: false,
       })),
     };
-    const data = await UsuariosEndpoint.list({ pageNumber: params.page, pageSize: params.pageSize, sort });
+    const data = await UsersEndpoint.list({ pageNumber: params.page, pageSize: params.pageSize, sort });
     callback(data);
   }
 
   async connectedCallback() {
     super.connectedCallback();
     this.classList.add('flex', 'flex-col', 'h-full');
-    this.gridSize = (await UsuariosEndpoint.count()) ?? 0;
+    this.gridSize = (await UsersEndpoint.count()) ?? 0;
+    this.roles = await RolesEndpoint.listAll();
   }
 
   private async itemSelected(event: CustomEvent) {
-    const item: Usuarios = event.detail.value as Usuarios;
+    const item: Users = event.detail.value as Users;
     this.grid.selectedItems = item ? [item] : [];
 
     if (item) {
-      const fromBackend = await UsuariosEndpoint.get(item.id!);
+      const fromBackend = await UsersEndpoint.get(item.id!);
       fromBackend ? this.binder.read(fromBackend) : this.refreshGrid();
     } else {
       this.clearForm();
@@ -156,17 +137,17 @@ export class UsuariosView extends View {
   private async save() {
     try {
       const isNew = !this.binder.value.id;
-      await this.binder.submitTo(UsuariosEndpoint.update);
+      await this.binder.submitTo(UsersEndpoint.update);
       if (isNew) {
         // We added a new item
         this.gridSize++;
       }
       this.clearForm();
       this.refreshGrid();
-      Notification.show(`Usuarios details stored.`, { position: 'bottom-start' });
+      Notification.show(`Usuario guardado correctamente`, { theme: 'primary', position: 'bottom-start' });
     } catch (error: any) {
       if (error instanceof EndpointError) {
-        Notification.show(`Server error. ${error.message}`, { theme: 'error', position: 'bottom-start' });
+        Notification.show(`No se pudo guardar el usuario`, { theme: 'error', position: 'bottom-start' });
       } else {
         throw error;
       }
@@ -185,4 +166,7 @@ export class UsuariosView extends View {
     this.grid.selectedItems = [];
     this.grid.clearCache();
   }
+  
 }
+
+

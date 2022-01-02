@@ -14,19 +14,21 @@ import { Notification } from '@vaadin/notification';
 import '@vaadin/polymer-legacy-adapter';
 import '@vaadin/split-layout';
 import '@vaadin/text-field';
+import '@vaadin/text-area';
+import '@vaadin/combo-box'
 import '@vaadin/upload';
 import '@vaadin/vaadin-icons';
-import * as CategoriasEndpoint from 'Frontend/generated/CategoriasEndpoint';
 import Sort from 'Frontend/generated/com/vaadin/fusion/mappedtypes/Sort';
-import Categorias from 'Frontend/generated/com/yefersoncm/app/data/entity/Categorias';
-import CategoriasModel from 'Frontend/generated/com/yefersoncm/app/data/entity/CategoriasModel';
+import Status from 'Frontend/generated/com/yefersoncm/app/data/entity/Status';
+import StatusModel from 'Frontend/generated/com/yefersoncm/app/data/entity/StatusModel';
 import Direction from 'Frontend/generated/org/springframework/data/domain/Sort/Direction';
+import * as StatusEndpoint from 'Frontend/generated/StatusEndpoint';
 import { html } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
 import { View } from '../view';
 
-@customElement('categorias-view')
-export class CategoriasView extends View {
+@customElement('status-view')
+export class EstadosView extends View {
   @query('#grid')
   private grid!: Grid;
 
@@ -35,7 +37,7 @@ export class CategoriasView extends View {
 
   private gridDataProvider = this.getGridData.bind(this);
 
-  private binder = new Binder<Categorias, CategoriasModel>(this, CategoriasModel);
+  private binder = new Binder<Status, StatusModel>(this, StatusModel);
 
   render() {
     return html`
@@ -49,20 +51,21 @@ export class CategoriasView extends View {
             .dataProvider=${this.gridDataProvider}
             @active-item-changed=${this.itemSelected}
           >
-            <vaadin-grid-sort-column auto-width path="nombre"></vaadin-grid-sort-column>
-            <vaadin-grid-sort-column auto-width path="descripcion"></vaadin-grid-sort-column>
+            <vaadin-grid-sort-column auto-width path="id"></vaadin-grid-sort-column>
+            <vaadin-grid-sort-column auto-width path="name"></vaadin-grid-sort-column>
+            <vaadin-grid-sort-column auto-width path="description"></vaadin-grid-sort-column>
           </vaadin-grid>
         </div>
         <div class="flex flex-col" style="width: 400px;">
           <div class="p-l flex-grow">
             <vaadin-form-layout
-              ><vaadin-text-field label="Nombre" id="nombre" ${field(this.binder.model.nombre)}></vaadin-text-field
-              ><vaadin-text-field
-                label="Descripcion"
-                id="descripcion"
-                ${field(this.binder.model.descripcion)}
-              ></vaadin-text-field
-            ></vaadin-form-layout>
+              ><vaadin-text-field label="Name" id="name" ${field(this.binder.model.name)}></vaadin-text-field
+              ><vaadin-text-area
+                label="Description"
+                id="description"
+                ${field(this.binder.model.description)}
+              ></vaadin-text-area
+              ></vaadin-form-layout>
           </div>
           <vaadin-horizontal-layout class="w-full flex-wrap bg-contrast-5 py-s px-l" theme="spacing">
             <vaadin-button theme="primary" @click=${this.save}>Save</vaadin-button>
@@ -74,8 +77,8 @@ export class CategoriasView extends View {
   }
 
   private async getGridData(
-    params: GridDataProviderParams<Categorias>,
-    callback: GridDataProviderCallback<Categorias | undefined>
+    params: GridDataProviderParams<Status>,
+    callback: GridDataProviderCallback<Status | undefined>
   ) {
     const sort: Sort = {
       orders: params.sortOrders.map((order) => ({
@@ -84,22 +87,22 @@ export class CategoriasView extends View {
         ignoreCase: false,
       })),
     };
-    const data = await CategoriasEndpoint.list({ pageNumber: params.page, pageSize: params.pageSize, sort });
+    const data = await StatusEndpoint.list({ pageNumber: params.page, pageSize: params.pageSize, sort });
     callback(data);
   }
 
   async connectedCallback() {
     super.connectedCallback();
     this.classList.add('flex', 'flex-col', 'h-full');
-    this.gridSize = (await CategoriasEndpoint.count()) ?? 0;
+    this.gridSize = (await StatusEndpoint.count()) ?? 0;
   }
 
   private async itemSelected(event: CustomEvent) {
-    const item: Categorias = event.detail.value as Categorias;
+    const item: Status = event.detail.value as Status;
     this.grid.selectedItems = item ? [item] : [];
 
     if (item) {
-      const fromBackend = await CategoriasEndpoint.get(item.id!);
+      const fromBackend = await StatusEndpoint.get(item.id!);
       fromBackend ? this.binder.read(fromBackend) : this.refreshGrid();
     } else {
       this.clearForm();
@@ -109,14 +112,14 @@ export class CategoriasView extends View {
   private async save() {
     try {
       const isNew = !this.binder.value.id;
-      await this.binder.submitTo(CategoriasEndpoint.update);
+      await this.binder.submitTo(StatusEndpoint.update);
       if (isNew) {
         // We added a new item
         this.gridSize++;
       }
       this.clearForm();
       this.refreshGrid();
-      Notification.show(`Categorias details stored.`, { position: 'bottom-start' });
+      Notification.show(`Posts details stored.`, { position: 'bottom-start' });
     } catch (error: any) {
       if (error instanceof EndpointError) {
         Notification.show(`Server error. ${error.message}`, { theme: 'error', position: 'bottom-start' });

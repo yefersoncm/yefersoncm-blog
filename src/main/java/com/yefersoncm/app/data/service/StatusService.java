@@ -1,27 +1,27 @@
 package com.yefersoncm.app.data.service;
-
-import com.yefersoncm.app.data.entity.Post;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.yefersoncm.app.data.entity.Status;
 import java.util.Optional;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
+
 
 @Service
-public class PostsService {
+public class StatusService {
 
-    private PostsRepository repository;
+    private StatusRepository repository;
 
-    public PostsService(@Autowired PostsRepository repository) {
+    public StatusService(@Autowired StatusRepository repository) {
         this.repository = repository;
     }
 
-    public Optional<Post> get(Integer id) {
+    public Optional<Status> get(Integer id) {
         return repository.findById(id);
     }
 
-    public Post update(Post entity) {
+    public Status update(Status entity) {
         return repository.save(entity);
     }
 
@@ -29,7 +29,7 @@ public class PostsService {
         repository.deleteById(id);
     }
 
-    public Page<Post> list(Pageable pageable) {
+    public Page<Status> list(Pageable pageable) {
         return repository.findAll(pageable);
     }
 
@@ -37,12 +37,7 @@ public class PostsService {
         return (int) repository.count();
     }
 
-    public List<Post> listAll() {
+    public List<Status> listAll() {
         return repository.findAll();
-    }
-
-    public List<Post> listPublished() {
-        return repository.findPublished();
-    }
-
+}
 }

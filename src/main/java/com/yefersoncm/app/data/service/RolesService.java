@@ -1,26 +1,27 @@
 package com.yefersoncm.app.data.service;
-
-import com.yefersoncm.app.data.entity.Usuarios;
-import java.util.Optional;
+import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.yefersoncm.app.data.entity.Rol;
+import java.util.Optional;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
+
 
 @Service
-public class UsuariosService {
+public class RolesService {
 
-    private UsuariosRepository repository;
+    private RolesRepository repository;
 
-    public UsuariosService(@Autowired UsuariosRepository repository) {
+    public RolesService(@Autowired RolesRepository repository) {
         this.repository = repository;
     }
 
-    public Optional<Usuarios> get(Integer id) {
+    public Optional<Rol> get(Integer id) {
         return repository.findById(id);
     }
 
-    public Usuarios update(Usuarios entity) {
+    public Rol update(Rol entity) {
         return repository.save(entity);
     }
 
@@ -28,7 +29,7 @@ public class UsuariosService {
         repository.deleteById(id);
     }
 
-    public Page<Usuarios> list(Pageable pageable) {
+    public Page<Rol> list(Pageable pageable) {
         return repository.findAll(pageable);
     }
 
@@ -36,4 +37,7 @@ public class UsuariosService {
         return (int) repository.count();
     }
 
+    public List<Rol> listAll() {
+        return repository.findAll();
+    }
 }

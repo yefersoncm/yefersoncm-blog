@@ -3,34 +3,40 @@ package com.yefersoncm.app.data.endpoint;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.fusion.Endpoint;
 import com.vaadin.fusion.Nonnull;
-import com.yefersoncm.app.data.entity.Categorias;
-import com.yefersoncm.app.data.service.CategoriasService;
+import com.yefersoncm.app.data.entity.Status;
+import com.yefersoncm.app.data.service.StatusService;
 import java.util.Optional;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+
 @Endpoint
 @AnonymousAllowed
-public class CategoriasEndpoint {
+public class StatusEndpoint {
+    private StatusService service;
 
-    private CategoriasService service;
-
-    public CategoriasEndpoint(@Autowired CategoriasService service) {
+    public StatusEndpoint(@Autowired StatusService service) {
         this.service = service;
     }
 
     @Nonnull
-    public Page<@Nonnull Categorias> list(Pageable page) {
+    public Page<@Nonnull Status> list(Pageable page) {
         return service.list(page);
     }
 
-    public Optional<Categorias> get(@Nonnull Integer id) {
+    @Nonnull
+    public List<@Nonnull Status> listAll() {
+        return service.listAll();
+    }
+
+    public Optional<Status> get(@Nonnull Integer id) {
         return service.get(id);
     }
 
     @Nonnull
-    public Categorias update(@Nonnull Categorias entity) {
+    public Status update(@Nonnull Status entity) {
         return service.update(entity);
     }
 
@@ -41,5 +47,4 @@ public class CategoriasEndpoint {
     public int count() {
         return service.count();
     }
-
 }

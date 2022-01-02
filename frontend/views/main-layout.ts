@@ -6,6 +6,7 @@ import '@vaadin/context-menu';
 import '@vaadin/polymer-legacy-adapter';
 import '@vaadin/tabs';
 import '@vaadin/tabs/vaadin-tab';
+import '@vaadin/icon';
 import { html } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { router } from '../index';

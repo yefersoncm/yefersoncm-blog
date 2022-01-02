@@ -1,3 +1,23 @@
 @import url('./main-layout.css');
-@import url('./views/home-view.css');
+@import url('./views/blog-view.css');
 @import url('line-awesome/dist/line-awesome/css/line-awesome.min.css');
+
+.devicon-java-plain {
+    font-size: 1.5rem
+}
+
+.devicon-flutter-plain {
+    font-size: 1.5rem
+}
+
+.devicon-angularjs-plain {
+    font-size: 1.5rem
+}
+
+.devicon-python-plain {
+    font-size: 1.5rem
+}
+
+vaadin-devmode-gizmo {
+    visibility: hidden;
+}

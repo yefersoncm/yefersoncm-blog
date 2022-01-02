@@ -1,6 +1,6 @@
 package com.yefersoncm.app.data.service;
 
-import com.yefersoncm.app.data.entity.Post;
+import com.yefersoncm.app.data.entity.Category;
 import java.util.Optional;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,19 +9,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PostsService {
+public class CategoriesService {
 
-    private PostsRepository repository;
+    private CategoriesRepository repository;
 
-    public PostsService(@Autowired PostsRepository repository) {
+    public CategoriesService(@Autowired CategoriesRepository repository) {
         this.repository = repository;
     }
 
-    public Optional<Post> get(Integer id) {
+    public Optional<Category> get(Integer id) {
         return repository.findById(id);
     }
 
-    public Post update(Post entity) {
+    public Category update(Category entity) {
         return repository.save(entity);
     }
 
@@ -29,20 +29,16 @@ public class PostsService {
         repository.deleteById(id);
     }
 
-    public Page<Post> list(Pageable pageable) {
+    public Page<Category> list(Pageable pageable) {
         return repository.findAll(pageable);
+    }
+    
+    public List<Category> listAll() {
+        return repository.findAll();
     }
 
     public int count() {
         return (int) repository.count();
-    }
-
-    public List<Post> listAll() {
-        return repository.findAll();
-    }
-
-    public List<Post> listPublished() {
-        return repository.findPublished();
     }
 
 }

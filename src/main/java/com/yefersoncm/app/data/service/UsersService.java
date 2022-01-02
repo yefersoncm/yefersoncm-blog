@@ -1,26 +1,27 @@
 package com.yefersoncm.app.data.service;
 
-import com.yefersoncm.app.data.entity.Categorias;
+import com.yefersoncm.app.data.entity.Users;
 import java.util.Optional;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CategoriasService {
+public class UsersService {
 
-    private CategoriasRepository repository;
+    private UsersRepository repository;
 
-    public CategoriasService(@Autowired CategoriasRepository repository) {
+    public UsersService(@Autowired UsersRepository repository) {
         this.repository = repository;
     }
 
-    public Optional<Categorias> get(Integer id) {
+    public Optional<Users> get(Integer id) {
         return repository.findById(id);
     }
 
-    public Categorias update(Categorias entity) {
+    public Users update(Users entity) {
         return repository.save(entity);
     }
 
@@ -28,12 +29,20 @@ public class CategoriasService {
         repository.deleteById(id);
     }
 
-    public Page<Categorias> list(Pageable pageable) {
+    public Page<Users> list(Pageable pageable) {
         return repository.findAll(pageable);
     }
 
     public int count() {
         return (int) repository.count();
+    }
+
+    public List<Users> listAll() {
+        return repository.findAll();
+    }
+
+    public Users getUserByEmail(String email){
+        return repository.findByEmail(email);
     }
 
 }
